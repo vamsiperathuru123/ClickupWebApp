@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install *)",
+      "Bash(npx tsc *)",
+      "Bash(npm run *)",
+      "WebFetch(domain:developer.clickup.com)",
+      "Bash(powershell -NoProfile -Command \"Get-Process -Id 24480 -ErrorAction SilentlyContinue | Stop-Process -Force\")",
+      "Bash(powershell -NoProfile -Command \"Get-Process -Id 19820 -ErrorAction SilentlyContinue | Stop-Process -Force\")",
+      "Bash(powershell -NoProfile -Command \"Get-Process -Id 30368 -ErrorAction SilentlyContinue | Stop-Process -Force\")",
+      "WebSearch",
+      "Bash(powershell -NoProfile -Command \"Get-Process -Id 31604 -ErrorAction SilentlyContinue | Stop-Process -Force\")",
+      "Bash(powershell -NoProfile -Command \"Get-Process -Id 28332 -ErrorAction SilentlyContinue | Stop-Process -Force\")",
+      "PowerShell(Get-Process -Id 6008 -ErrorAction SilentlyContinue)",
+      "PowerShell(Stop-Process -Force)",
+      "PowerShell(\"done\")",
+      "WebFetch(domain:help.clickup.com)",
+      "mcp__visualize__show_widget",
+      "Bash(python -)",
+      "PowerShell(python \"C:\\\\Users\\\\NXTWAVE\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-NXTWAVE-Documents-ClickupMcpProject---V0\\\\046411ba-3733-43ed-9125-9c8e5d50298c\\\\scratchpad\\\\patch_autorefresh.py\")",
+      "Bash(node -e \"console.log\\(require\\('./node_modules/@tanstack/query-core/package.json'\\).version\\)\")",
+      "PowerShell(python \"C:\\\\Users\\\\NXTWAVE\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-NXTWAVE-Documents-ClickupMcpProject---V0\\\\046411ba-3733-43ed-9125-9c8e5d50298c\\\\scratchpad\\\\patch_refresh2.py\")",
+      "PowerShell(python \"C:\\\\Users\\\\NXTWAVE\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-NXTWAVE-Documents-ClickupMcpProject---V0\\\\046411ba-3733-43ed-9125-9c8e5d50298c\\\\scratchpad\\\\patch_shared_meta_lib.py\")",
+      "mcp__visualize__read_me"
+    ]
+  }
+}
