@@ -33,7 +33,12 @@ export interface RoadmapFetchResult {
 export async function fetchRoadmapData(
   token: string,
   workspaceId: string,
-  selectedScope: ScopeSelection[]
+  selectedScope: ScopeSelection[],
+  /** Restricts real logged-time entries to sessions within this window (inclusive)
+   * — from the report's "Select Range" picker. Tasks themselves are never
+   * date-filtered, only how many of their logged hours count; a task with no
+   * time logged in the window still appears, at 0h. Omit for "all time". */
+  dateRange?: { start: number; end: number }
 ): Promise<RoadmapFetchResult> {
   // ClickUp's time-entries endpoint only returns the authenticated user's own
   // entries unless every member's user id is passed explicitly — fetched once up
@@ -58,7 +63,7 @@ export async function fetchRoadmapData(
       // time entries by the selected container alone silently misses it.
       const homeListIds = Array.from(new Set(tasks.map((t) => t.listId).filter(Boolean)))
       const timeEntryResults = await Promise.all(
-        homeListIds.map((listId) => fetchTimeEntriesForScope(token, workspaceId, { listId }, memberIds))
+        homeListIds.map((listId) => fetchTimeEntriesForScope(token, workspaceId, { listId }, memberIds, dateRange))
       )
       const timeRestriction: TimeEntriesRestriction = timeEntryResults.some((r) => r.restriction === 'permission')
         ? 'permission'

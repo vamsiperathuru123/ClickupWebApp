@@ -7,6 +7,7 @@ import { fetchRoadmapData } from '@/lib/roadmap/loadRoadmap'
 import { aggregateTimeEntries } from '@/lib/roadmap/timeAggregation'
 import { buildRoadmap } from '@/lib/roadmap/aggregate'
 import { AUTO_REFRESH_MS } from '@/lib/autoRefresh'
+import { dateRangeFromInputs } from '@/lib/dates'
 
 /**
  * Fetches real tasks + real time-tracking entries for every list/folder the user has
@@ -20,12 +21,15 @@ export function useRoadmapData() {
   const workspaceId = useUiStore((s) => s.activeWorkspaceId)
   const selectedScope = useRoadmapStore((s) => s.selectedScope)
   const avgCostPerHour = useRoadmapStore((s) => s.avgCostPerHour)
+  const timeRangeFrom = useRoadmapStore((s) => s.timeRangeFrom)
+  const timeRangeTo = useRoadmapStore((s) => s.timeRangeTo)
+  const dateRange = dateRangeFromInputs(timeRangeFrom, timeRangeTo)
 
   const scopeKey = selectedScope.map((s) => `${s.type}:${s.id}`).join(',')
 
   const query = useQuery({
-    queryKey: ['roadmap-data', workspaceId, scopeKey],
-    queryFn: () => fetchRoadmapData(token!, workspaceId!, selectedScope),
+    queryKey: ['roadmap-data', workspaceId, scopeKey, timeRangeFrom, timeRangeTo],
+    queryFn: () => fetchRoadmapData(token!, workspaceId!, selectedScope, dateRange ?? undefined),
     enabled: !!token && !!workspaceId && selectedScope.length > 0,
     staleTime: AUTO_REFRESH_MS,
     // Keeps the open report current without any user action. Ticks are skipped

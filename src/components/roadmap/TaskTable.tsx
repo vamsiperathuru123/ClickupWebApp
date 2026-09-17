@@ -2,15 +2,12 @@ import { Avatar, AvatarStack } from '@/components/common/Avatar'
 import { PriorityBadge, StatusBadge } from '@/components/common/Badges'
 import { formatShortDate } from '@/lib/dates'
 import { formatCurrency, formatHours } from '@/lib/roadmap/format'
-import { useUiStore } from '@/store/uiStore'
 import type { RoadmapTaskRow } from '@/lib/roadmap/types'
 
 const GRID_TEMPLATE =
   'minmax(200px,1fr) 110px 130px 120px 90px 95px 95px 70px 85px 110px 140px 130px 130px 140px 140px'
 
 export function TaskTable({ rows }: { rows: RoadmapTaskRow[] }) {
-  const setSelectedTaskId = useUiStore((s) => s.setSelectedTaskId)
-
   return (
     <div className="overflow-x-auto border border-surface-border rounded-md">
       <div
@@ -46,10 +43,7 @@ export function TaskTable({ rows }: { rows: RoadmapTaskRow[] }) {
             href={row.task.url}
             target="_blank"
             rel="noreferrer"
-            onClick={(e) => {
-              e.preventDefault()
-              setSelectedTaskId(row.task.id)
-            }}
+            title={row.task.name}
             className="text-left truncate text-gray-100 hover:text-accent-400 hover:underline"
           >
             {row.task.name}

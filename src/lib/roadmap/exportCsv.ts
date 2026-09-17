@@ -102,6 +102,10 @@ export interface RoadmapCsvInput {
   spilloverRows: SpilloverTaskRow[]
   spilloverSprintNames: string[]
   previousSprintCount: number
+  /** "Select Range" as applied when this export was generated. Null when unset
+   * (all-time). */
+  timeRangeFrom?: string | null
+  timeRangeTo?: string | null
 }
 
 /**
@@ -112,7 +116,7 @@ export interface RoadmapCsvInput {
  * blank line and a title row so a spreadsheet opens it as readable blocks.
  */
 export function buildRoadmapCsv(input: RoadmapCsvInput): string {
-  const { goals, avgCostPerHour, totalWorkingHours, scopeNames, spilloverRows } = input
+  const { goals, avgCostPerHour, totalWorkingHours, scopeNames, spilloverRows, timeRangeFrom, timeRangeTo } = input
   const now = Date.now()
   const rows = flattenTaskRows(goals)
 
@@ -129,6 +133,7 @@ export function buildRoadmapCsv(input: RoadmapCsvInput): string {
   lines.push(row(['Roadmap Status Report']))
   lines.push(row(['Generated', new Date().toLocaleString()]))
   lines.push(row(['Scope', scopeNames.join('; ') || '—']))
+  if (timeRangeFrom && timeRangeTo) lines.push(row(['Time Range', `${timeRangeFrom} to ${timeRangeTo}`]))
   lines.push(row(['Avg Cost Per Hour', avgCostPerHour]))
   lines.push(row(['Total Working Hours', totalWorkingHours]))
   lines.push(row(['Total Budget', totalBudget.toFixed(2)]))

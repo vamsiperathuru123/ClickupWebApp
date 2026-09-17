@@ -112,6 +112,12 @@ export interface TimeEntry {
   taskId: string
   user: ClickUpUser
   durationMs: number
+  /** When this logged session started, in epoch ms — kept so a "Select Range"
+   * window can be applied precisely by the entry's own start rather than relying
+   * on ClickUp's server-side date filter, which excludes an entry whose *end*
+   * falls outside the queried range even when its start is well inside it (see
+   * `fetchTimeEntriesForScope` in clickupService.ts for why that matters here). */
+  startMs: number
 }
 
 /** Aggregated real hours for one task: total plus a per-person split, both derived

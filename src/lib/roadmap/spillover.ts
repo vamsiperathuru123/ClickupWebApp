@@ -289,7 +289,11 @@ export async function fetchSpilloverData(
   token: string,
   workspaceId: string,
   selectedScope: RoadmapScopeItem[],
-  previousSprintCount: number
+  previousSprintCount: number,
+  /** Same "Select Range" window the main report applies to logged hours — passed
+   * through so a spillover task's hours reflect the same restriction rather than
+   * always showing all-time totals. Omit for "all time". */
+  dateRange?: { start: number; end: number }
 ): Promise<SpilloverResult> {
   const scope = await resolveSpilloverScope(token, selectedScope, previousSprintCount)
 
@@ -356,7 +360,7 @@ export async function fetchSpilloverData(
   const memberIds = members.map((m) => m.id)
   const homeListIds = Array.from(new Set(liveCandidates.map((t) => t.listId).filter(Boolean)))
   const timeEntryResults = await Promise.all(
-    homeListIds.map((listId) => fetchTimeEntriesForScope(token, workspaceId, { listId }, memberIds))
+    homeListIds.map((listId) => fetchTimeEntriesForScope(token, workspaceId, { listId }, memberIds, dateRange))
   )
   const timeSummaries = aggregateTimeEntries(timeEntryResults.flatMap((r) => r.entries))
 

@@ -66,3 +66,18 @@ export function isOverdue(dueDate: number | null, isDone: boolean): boolean {
   if (!dueDate || isDone) return false
   return dueDate < Date.now()
 }
+
+/**
+ * Turns the Roadmap report's "Select Range" from/to date-input strings
+ * ('YYYY-MM-DD', local time — the browser date input's own value format) into an
+ * inclusive epoch-ms window: midnight of `from` through the last millisecond of
+ * `to`. Returns null when either bound is missing, so callers can treat that as
+ * "no range selected" (report defaults to all-time).
+ */
+export function dateRangeFromInputs(from: string | null, to: string | null): { start: number; end: number } | null {
+  if (!from || !to) return null
+  const start = new Date(`${from}T00:00:00`).getTime()
+  const end = new Date(`${to}T23:59:59.999`).getTime()
+  if (Number.isNaN(start) || Number.isNaN(end)) return null
+  return { start, end }
+}

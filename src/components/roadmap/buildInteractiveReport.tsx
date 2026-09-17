@@ -63,6 +63,11 @@ export interface InteractiveReportInput {
    * (token isn't Owner/Admin), 'error' when some other failure (rate limit, 5xx,
    * network) forced the same own-time-only fallback, null when unrestricted. */
   timeRestriction: TimeEntriesRestriction
+  /** "Select Range" as applied when this export was generated — shown in the
+   * header so the file records what window its hours reflect. Null when unset
+   * (all-time). */
+  timeRangeFrom: string | null
+  timeRangeTo: string | null
 }
 
 function escapeHtml(text: string): string {
@@ -500,6 +505,11 @@ ${collectPageCss()}
   </div>
   <div class="flex items-center flex-wrap gap-x-4 gap-y-1 text-xs text-gray-400">
     <span><span class="text-gray-500">Scope:</span> ${escapeHtml(input.scopeNames.join(', ') || '—')}</span>
+    ${
+      input.timeRangeFrom && input.timeRangeTo
+        ? `<span><span class="text-gray-500">Time range:</span> ${escapeHtml(input.timeRangeFrom)} – ${escapeHtml(input.timeRangeTo)}</span>`
+        : ''
+    }
     <span><span class="text-gray-500">Avg cost/hour:</span> ${escapeHtml(formatCurrency(input.avgCostPerHour))}</span>
     <span><span class="text-gray-500">Total working hours:</span> ${escapeHtml(formatHours(input.totalWorkingHours))}</span>
     <span><span class="text-gray-500">Total budget:</span> ${escapeHtml(formatCurrency(totalBudget))}</span>
