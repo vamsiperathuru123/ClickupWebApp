@@ -473,7 +473,21 @@ export async function fetchTimeEntriesForScope(
   token: string,
   workspaceId: string,
   scope: TaskScope,
-  assigneeIds?: number[]
+  assigneeIds?: number[],
+  /** Restricts real logged-time entries to sessions that *started* within this
+   * window (inclusive) — from the report's "Select Range" picker. Omit for "all
+   * time", the report's default.
+   *
+   * Deliberately NOT sent to ClickUp's own `start_date`/`end_date` query params:
+   * confirmed live that ClickUp excludes an entry whose *end* timestamp falls
+   * outside the queried range even when its *start* is well inside it — a manual
+   * entry logged with an hours-long duration starting late on the last selected
+   * day (spilling past midnight) was silently dropped entirely, even though it
+   * genuinely started within the range. So this always fetches the full,
+   * unrestricted range from ClickUp and applies the range here instead, against
+   * each entry's own start time — the one timestamp the user's date picker
+   * actually means to bound. */
+  dateRange?: { start: number; end: number }
 ): Promise<TimeEntriesResult> {
   let restriction: TimeEntriesRestriction = null
 
@@ -511,6 +525,11 @@ export async function fetchTimeEntriesForScope(
   const list = Array.isArray(raw) ? raw : (raw as any).data ?? []
   const entries = list
     .filter((e: any) => e?.task?.id && e?.user?.id)
+    .filter((e: any) => {
+      if (!dateRange) return true
+      const startMs = Number(e.start) || 0
+      return startMs >= dateRange.start && startMs <= dateRange.end
+    })
     .map((e: any) => ({
       id: String(e.id),
       taskId: String(e.task.id),
@@ -523,6 +542,7 @@ export async function fetchTimeEntriesForScope(
         initials: e.user.initials,
       },
       durationMs: Number(e.duration) || 0,
+      startMs: Number(e.start) || 0,
     }))
   return { entries, restriction }
 }

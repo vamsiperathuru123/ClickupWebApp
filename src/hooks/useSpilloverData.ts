@@ -4,6 +4,7 @@ import { useUiStore } from '@/store/uiStore'
 import { useRoadmapStore } from '@/store/roadmapStore'
 import { fetchSpilloverData } from '@/lib/roadmap/spillover'
 import { AUTO_REFRESH_MS } from '@/lib/autoRefresh'
+import { dateRangeFromInputs } from '@/lib/dates'
 
 /**
  * Real spillover data for the currently selected roadmap scope: tasks that were
@@ -15,12 +16,15 @@ export function useSpilloverData(previousSprintCount: number) {
   const token = useAuthStore((s) => s.token)
   const workspaceId = useUiStore((s) => s.activeWorkspaceId)
   const selectedScope = useRoadmapStore((s) => s.selectedScope)
+  const timeRangeFrom = useRoadmapStore((s) => s.timeRangeFrom)
+  const timeRangeTo = useRoadmapStore((s) => s.timeRangeTo)
+  const dateRange = dateRangeFromInputs(timeRangeFrom, timeRangeTo)
 
   const scopeKey = selectedScope.map((s) => `${s.type}:${s.id}`).join(',')
 
   const query = useQuery({
-    queryKey: ['spillover-data', workspaceId, scopeKey, previousSprintCount],
-    queryFn: () => fetchSpilloverData(token!, workspaceId!, selectedScope, previousSprintCount),
+    queryKey: ['spillover-data', workspaceId, scopeKey, previousSprintCount, timeRangeFrom, timeRangeTo],
+    queryFn: () => fetchSpilloverData(token!, workspaceId!, selectedScope, previousSprintCount, dateRange ?? undefined),
     enabled: !!token && !!workspaceId && selectedScope.length > 0 && previousSprintCount > 0,
     // Every task here is classified by its *current* live status — a stale cached
     // result would keep showing a task's old status/bucket after it's actually

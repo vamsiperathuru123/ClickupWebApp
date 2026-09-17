@@ -195,16 +195,28 @@ export const clickupRest = {
    * `assignee` must be explicitly passed (as one comma-separated value, not
    * repeated `assignee[]=` params like other endpoints use for arrays) to get
    * everyone's logged time, and doing so requires a Workspace Owner/Admin token.
+   *
+   * Critically, ClickUp *also* defaults `start_date`/`end_date` to just the last 30
+   * days when they're omitted — confirmed against ClickUp's own API reference. This
+   * report has no notion of a calendar window (a task's total hours is the sum of
+   * every session ever logged against it), so both bounds are always passed
+   * explicitly and as wide as ClickUp allows, or a task's early hours silently
+   * vanish the moment they age past 30 days. `startDate` defaults to the Unix
+   * epoch; `endDate` to "now" with a day of slack for clock skew.
    */
   getTimeEntriesForScope: (
     token: string,
     workspaceId: string,
     scope: { listId?: string; folderId?: string },
-    assigneeIds?: number[]
+    assigneeIds?: number[],
+    startDate = 0,
+    endDate = Date.now() + 24 * 60 * 60 * 1000
   ) =>
     restFetch<{ data: unknown[] }>(token, `/team/${workspaceId}/time_entries`, {
       list_id: scope.listId,
       folder_id: scope.folderId,
       assignee: assigneeIds && assigneeIds.length > 0 ? assigneeIds.join(',') : undefined,
+      start_date: String(startDate),
+      end_date: String(endDate),
     }).then((r) => r.data),
 }

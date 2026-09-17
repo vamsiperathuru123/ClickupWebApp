@@ -14,6 +14,7 @@ import { buildRoadmapCsv, downloadCsv } from '@/lib/roadmap/exportCsv'
 import { buildInteractiveReport } from './buildInteractiveReport'
 import { EMPTY_FILTERS, computeFilterOptions, filterRoadmapGoals, hasActiveFilters } from '@/lib/roadmap/filterRoadmap'
 import { RoadmapScopePicker } from './RoadmapScopePicker'
+import { TimeRangePicker } from './TimeRangePicker'
 import { CostSettingsBar } from './CostSettingsBar'
 import { RoadmapFilterBar } from './RoadmapFilterBar'
 import { GoalsTab } from './GoalsTab'
@@ -120,6 +121,8 @@ export function RoadmapView() {
   const avgCostPerHour = useRoadmapStore((s) => s.avgCostPerHour)
   const totalWorkingHours = useRoadmapStore((s) => s.totalWorkingHours)
   const previousSprintCount = useRoadmapStore((s) => s.spilloverPreviousSprintCount)
+  const timeRangeFrom = useRoadmapStore((s) => s.timeRangeFrom)
+  const timeRangeTo = useRoadmapStore((s) => s.timeRangeTo)
   const queryClient = useQueryClient()
   const { goals, tasks, isLoading, isFetching, error, refetch, dataUpdatedAt, timeRestriction } = useRoadmapData()
   const spillover = useSpilloverData(previousSprintCount)
@@ -158,6 +161,8 @@ export function RoadmapView() {
         spillover,
         activeTab: tab,
         timeRestriction,
+        timeRangeFrom,
+        timeRangeTo,
       })
       downloadHtml(html, 'roadmap-status-report.html')
     } finally {
@@ -174,6 +179,8 @@ export function RoadmapView() {
       spilloverRows: spillover.rows,
       spilloverSprintNames: spillover.spilloverSprintNames,
       previousSprintCount,
+      timeRangeFrom,
+      timeRangeTo,
     })
     downloadCsv(csv, 'roadmap-status-report.csv')
   }
@@ -193,6 +200,7 @@ export function RoadmapView() {
           </div>
           <div className="flex items-center gap-2">
             {hasReport && <DownloadMenu onDownloadHtml={downloadReportHtml} onDownloadCsv={downloadReportCsv} />}
+            <TimeRangePicker />
             <RoadmapScopePicker />
           </div>
         </div>

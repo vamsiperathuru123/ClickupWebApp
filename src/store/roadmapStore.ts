@@ -41,6 +41,12 @@ interface RoadmapState {
   functionTagSpilloverMode: ExecutiveSpilloverMode
   /** Overall Report's Audience selection — the whole report re-scopes to it. */
   overallAudience: AudienceFilter
+  /** "Select Range" — restricts every hours/cost figure in the report to real time
+   * entries logged within this window (inclusive of both dates). ISO date strings
+   * ('YYYY-MM-DD'), null when unset (report defaults to all-time). Tasks
+   * themselves are never date-filtered, only how many of their logged hours count. */
+  timeRangeFrom: string | null
+  timeRangeTo: string | null
 
   toggleScopeItem: (item: RoadmapScopeItem) => void
   clearScope: () => void
@@ -59,6 +65,8 @@ interface RoadmapState {
   setFunctionTagAudience: (value: AudienceFilter) => void
   setFunctionTagSpilloverMode: (value: ExecutiveSpilloverMode) => void
   setOverallAudience: (value: AudienceFilter) => void
+  setTimeRange: (from: string | null, to: string | null) => void
+  clearTimeRange: () => void
 }
 
 export const useRoadmapStore = create<RoadmapState>()(
@@ -80,6 +88,8 @@ export const useRoadmapStore = create<RoadmapState>()(
       functionTagAudience: 'all',
       functionTagSpilloverMode: 'without',
       overallAudience: 'all',
+      timeRangeFrom: null,
+      timeRangeTo: null,
 
       toggleScopeItem: (item) =>
         set((s) => {
@@ -107,6 +117,8 @@ export const useRoadmapStore = create<RoadmapState>()(
       setFunctionTagAudience: (value) => set({ functionTagAudience: value }),
       setFunctionTagSpilloverMode: (value) => set({ functionTagSpilloverMode: value }),
       setOverallAudience: (value) => set({ overallAudience: value }),
+      setTimeRange: (from, to) => set({ timeRangeFrom: from, timeRangeTo: to }),
+      clearTimeRange: () => set({ timeRangeFrom: null, timeRangeTo: null }),
     }),
     { name: 'dev-bandwidth-tracker-roadmap' }
   )
